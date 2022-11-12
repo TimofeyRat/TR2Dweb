@@ -3,8 +3,6 @@ var context = display.getContext('2d');
 display.style.left = "0px";
 display.style.right = "0px";
 display.style.position = "relative";
-display.width = window.innerWidth;
-display.height = window.innerHeight;
 window.onscroll = () => { window.scroll(0, 0); }
 document.body.style.overflow = "hidden";
 
@@ -37,6 +35,8 @@ function update(deltaTime)
 	if (click == null) return;
 	imageX = click.pageX - image.width / 2;
 	imageY = click.pageY - image.height / 2;
+	display.width = window.innerWidth;
+	display.height = window.innerHeight;
 }
 
 function render()
