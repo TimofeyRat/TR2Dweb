@@ -1,23 +1,51 @@
-var test = document.createElement("div");
-var x = 100;
-var y = 100;
-test.style.left = x + "px";
-test.style.top = x + "px";
-test.style.width = "50px";
-test.style.height = "50px";
-test.style.background = "red";
-test.style.position = "relative";
+var display = document.getElementById("display");
+var context = display.getContext('2d');
 
-document.body.appendChild(test)
+var lastTime = Date.now();
+
+var image = new Image();
+image.onload = function() { startGame(); };
+image.src = 'res/test.png';
+var imageX = 0;
+var imageY = 0;
+var moveRight = true;
+
+function startGame()
+{
+	main();
+}
 
 document.addEventListener("touchstart", trTouch);
 document.addEventListener("touchmove", trTouch);
 
+var click = null;
+
 function trTouch(event)
 {
-	var click=event.touches[0];
-	x = click.pageX - 25;
-	y = click.pageY - 25;
-	test.style.left = x + "px";
-	test.style.top = y + "px";
+	click = event.touches[0];
+}
+
+function update(deltaTime)
+{
+	if (click == null) return;
+	imageX = click.pageX - image.width / 2;
+	imageY = click.pageY - image.height / 2;
+}
+
+function render()
+{
+	context.clearRect(0, 0, display.width, display.height);
+	context.drawImage(image, imageX, imageY);
+}
+
+function main()
+{
+	var now = Date.now();
+	var dt = (now - lastTime) / 1000.0;
+	
+	update(dt);
+	render();
+	
+	lastTime = now;
+	requestAnimationFrame(main);
 }

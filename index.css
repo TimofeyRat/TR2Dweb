@@ -1,4 +1,10 @@
 body
 {
-    background-color: green;
+    background-color: black;
+}
+
+canvas
+{
+    border: 2px dotted blue;
+    background-color: gray;
 }
