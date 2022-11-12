@@ -1,5 +1,12 @@
 var display = document.getElementById("display");
 var context = display.getContext('2d');
+display.style.left = "0px";
+display.style.right = "0px";
+display.style.position = "relative";
+display.width = window.innerWidth;
+display.height = window.innerHeight;
+window.onscroll = () => { window.scroll(0, 0); }
+document.body.style.overflow = "hidden";
 
 var lastTime = Date.now();
 
