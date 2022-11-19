@@ -7,4 +7,7 @@ canvas
 {
     border: 2px dotted blue;
     background-color: gray;
+    position: relative;
+    left: 0px;
+    right: 0px;
 }
