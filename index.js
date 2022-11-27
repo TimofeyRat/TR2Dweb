@@ -11,7 +11,44 @@ class Rectangle
 	constructor(X = 0, Y = 0, W = 0, H = 0) { this.x = X; this.y = Y; this.w = W; this.h = H; }
 }
 
-class Object
+class Vector2
+{
+	x = 0; y = 0;
+	constructor(X = 0, Y = 0) { this.x = X; this.y = Y; }
+}
+
+class TRAnimation
+{
+	image = new Image();
+	frames = new Array();
+	currentFrame = 0;
+	speed = 0;
+	constructor(src = '', Frame = new Vector2(), animSpeed = 0)
+	{
+		this.image.src = src;
+		let framesArr = new Array();
+		this.speed = animSpeed;
+		this.image.onload = function()
+		{
+			let texCountX, texCountY;
+			texCountX = this.width / Frame.x; texCountY = this.height / Frame.y;
+			console.log(texCountX + ' ' + texCountY);
+			for (let y = 0; y < texCountY; y++)
+			{
+				for (let x = 0; x < texCountX; x++)
+				{
+					framesArr.push(new Rectangle(x * Frame.x, y * Frame.y, Frame.x, Frame.y));
+				}
+			}
+		};
+		this.frames = framesArr;
+	}
+	update(delta = 0) { this.currentFrame += this.speed * delta; if (this.currentFrame > this.frames.length - 1) { this.currentFrame = 0; } }
+	get(frame = 0) { return this.frames[Math.round(frame)]; }
+	getCurrentFrame() { return this.get(this.currentFrame); }
+}
+
+class TRObject
 {
 	image = new Image();
 	posX = 0;
@@ -34,7 +71,8 @@ class Object
 		}
 	}
 	setPos(X, Y) { this.posX = X; this.posY = Y; }
-	setImage(path) { this.image.src = path; }
+	loadImage(path) { this.image.src = path; }
+	setImage(image) { this.image = image; }
 	setObjScale(X, Y) { this.scaleX = X; this.scaleY = Y; }
 	containsPoint(pointX, pointY)
 	{
@@ -77,12 +115,33 @@ class Object
 	}
 }
 
+class Player
+{
+	object = new TRObject();
+	anim = new TRAnimation();
+	constructor(animation = new TRAnimation(), pos = new Vector2())
+	{
+		this.anim = animation;
+		this.object.setPos(pos.x, pos.y);
+	}
+	update(deltaTime)
+	{
+		this.anim.update(deltaTime);
+	}
+	draw()
+	{
+		this.object.setImage(this.anim.image);
+		this.object.setTextureRect(this.anim.get(this.anim.currentFrame));
+		this.object.draw();
+	}
+}
+
 class UI
 {
-	leftMove = new Object();
-	rightMove = new Object();
-	downMove = new Object();
-	upMove = new Object();
+	leftMove = new TRObject();
+	rightMove = new TRObject();
+	downMove = new TRObject();
+	upMove = new TRObject();
 	constructor()
 	{
 		this.leftMove.image.src = 'res/ui_buttons.png';
@@ -135,11 +194,6 @@ class UI
 	}
 }
 
-var obj = new Object();
-obj.setPos(100, 100);
-obj.setImage('res/test.png');
-obj.setTextureRect(new Rectangle(0, 0, 192, 192 / 2));
-
 var ui = new UI();
 
 var click = null;
@@ -155,17 +209,20 @@ document.addEventListener("resize", function()
 	ui.resizeUI();
 });
 
+var player = new Player(new TRAnimation('res/playerAnim.png', new Vector2(31, 64), 4), new Vector2(50, 50));
+
 function update(deltaTime)
 {
 	if (click == null) return;
+	player.update(deltaTime);
 	ui.resizeUI();
-	ui.update(deltaTime, click, obj);
+	ui.update(deltaTime, click, player.object);
 }
 
 function render()
 {
 	context.clearRect(0, 0, display.width, display.height);
-	obj.draw();
+	player.draw();
 	ui.draw();
 }
 
