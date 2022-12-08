@@ -2,6 +2,16 @@ var display = document.getElementById("display");
 var context = display.getContext('2d');
 var lastTime = Date.now();
 
+function renderBG() {}
+
+var backgroundImage = new Image();
+backgroundImage.src = 'res/bg.png';
+backgroundImage.onload = () =>
+{
+	renderBG = () => { context.drawImage(backgroundImage, 0, 0, backgroundImage.width, backgroundImage.height,
+		0, 0, display.width, display.height); }
+};
+
 window.onscroll = () => { window.scroll(0, 0); }
 document.body.style.overflow = "hidden";
 
@@ -80,7 +90,7 @@ class Trigger
 }
 
 var triggers = new Array();
-triggers.push(new Trigger(new Rectangle(0, 500, 128, 64), 'physic'));
+triggers.push(new Trigger(new Rectangle(0, 300, 1024, 64), 'physic'));
 
 class TRAnimation
 {
@@ -353,9 +363,9 @@ var ui = new UI();
 var click = null;
 
 display.width = window.innerWidth; display.height = window.innerHeight;
-document.addEventListener("touchstart", (event) => { click = event.touches; });
-document.addEventListener("touchmove", (event) => { click = event.touches; });
-document.addEventListener("touchend", (event) => { click = event.touches; });
+document.addEventListener("touchstart", (event) => { usedKey = false; click = event.touches; });
+document.addEventListener("touchmove", (event) => { usedKey = false; click = event.touches; });
+document.addEventListener("touchend", (event) => { usedKey = false; click = event.touches; });
 document.addEventListener("resize", () =>
 {
 	display.width = window.innerWidth;
@@ -379,6 +389,7 @@ function testRender() {}
 function render()
 {
 	context.clearRect(0, 0, display.width, display.height);
+	renderBG();
 	testRender();
 	player.draw();
 	ui.draw();
